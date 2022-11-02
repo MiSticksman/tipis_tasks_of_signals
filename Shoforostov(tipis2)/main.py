@@ -15,7 +15,7 @@ if __name__ == '__main__':
 
     plt.figure(figsize=(16, 10))
 
-    am = amplitude_modulation(freq=freq, amplitude=amplitude)
+    am = amplitude_modulation(unipolar_meander, freq=freq, amplitude=amplitude)
     ams_x, ams_y = modulation_spectrum(modulation=am)
 
     fm = frequency_modulation(freq=freq)
