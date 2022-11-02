@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
-import numpy as np
+import os
 
 from modulation import *
-import os
+
 
 if __name__ == '__main__':
 
@@ -11,18 +11,18 @@ if __name__ == '__main__':
     spectrum_names = ["am spectrum", "fm spectrum", "pm spectrum"]
 
     freq = 2
-    amplitude = 3
+    amplitude = 5
 
     plt.figure(figsize=(16, 10))
 
     am = amplitude_modulation(freq=freq, amplitude=amplitude)
-    ams_x, ams_y = modulation_spectrum(amplitude_modulation, freq=freq)
+    ams_x, ams_y = modulation_spectrum(modulation=am)
 
     fm = frequency_modulation(freq=freq)
-    fms_x, fms_y = modulation_spectrum(frequency_modulation, freq)
+    fms_x, fms_y = modulation_spectrum(modulation=fm)
 
     pm = phase_modulation(freq=freq)
-    pms_x, pms_y = modulation_spectrum(phase_modulation, freq=freq)
+    pms_x, pms_y = modulation_spectrum(modulation=pm)
 
     modulations = [am, fm, pm]
 
@@ -51,24 +51,36 @@ if __name__ == '__main__':
 
     plt.figure(figsize=(16, 10))
 
-    yf_clean = spectrum_with_main_frequencies()
+    ams_y_clean = spectrum_with_main_frequencies(am_spectrum=ams_y)
     plt.subplot(2, 2, 1)
-    plt.plot(ams_x, np.abs(yf_clean))
+    plt.plot(ams_x, np.abs(ams_y_clean))
+    plt.title('am spectrum with main frequencies')
+    plt.ylabel('amplitude')
+    plt.xlabel('freq')
     plt.xlim(0, 25)
 
-    f_clean = synthesis_of_am_signal()
+    ams_synthesis = synthesis_of_am_signal(ams_y_clean)
     plt.subplot(2, 2, 2)
-    plt.plot(TIME, f_clean)
+    plt.plot(TIME, ams_synthesis)
+    plt.title('synthesis of am signal')
+    plt.ylabel('amplitude')
+    plt.xlabel('time')
 
     meander = unipolar_meander(freq, amplitude=1)
-    # meander[0] = 0
+    meander[0] = 0
     plt.subplot(2, 2, 3)
     plt.plot(TIME, meander)
+    plt.title('modulating signal')
+    plt.ylabel('amplitude')
+    plt.xlabel('time')
 
-    filtering = execute_filter_signal(synthesis_of_am_signal)
+    filtering = filtering_of_signal(ams_synthesis)
+    filtering[0] = 0
     plt.subplot(2, 2, 4)
-    t2 = np.arange(0, 1, 1 / len(filtering))
     plt.plot(TIME, filtering)
+    plt.title('filtered signal')
+    plt.ylabel('amplitude')
+    plt.xlabel('time')
 
     plt.savefig(images + '/synthesisAndFiltration.jpg')
 

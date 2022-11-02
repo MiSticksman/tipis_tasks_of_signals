@@ -28,77 +28,66 @@ def frequency_modulation(freq=2):
 
 def phase_modulation(freq=2):
     fc = 10
-    # carrier = 1 * np.cos((2 * np.pi * fc * TIME) + np.pi / 2)
     modulator = unipolar_meander(freq)
     beta = np.pi / 2
     pm = np.cos((fc * 2 * np.pi * TIME) + (beta * modulator))
     return pm
 
 
-def modulation_spectrum(modulation, freq=2):
-    y = modulation(freq)
-    n = len(y)
+def modulation_spectrum(modulation):
+    n = len(modulation)
     frq = rfftfreq(n, 1 / FS)
-    yf = rfft(y)  # деление на n - нормализация
+    yf = rfft(modulation)
     yf[0] = 0
     return frq, yf
 
 
-# def amplitude_modulation_spectrum(freq=2):
-#     y = amplitude_modulation(freq)
-#     n = len(y)
+# def amplitude_modulation_spectrum(am):
+#     n = len(am)
 #     # frq = np.arange(n)
 #     # frq = frq[range(int(n))]
 #     frq = rfftfreq(n, 1 / FS)
-#     yf = rfft(y)  # деление на n - нормализация
+#     yf = rfft(am)  # деление на n - нормализация
 #     # yf = (np.abs(s1) ** 2) / n
 #     # yf = yf[range(int(n))]
 #     yf[0] = 0
 #     return frq, yf
-
-
-# def frequency_modulation_spectrum(freq=2):
-#     y = frequency_modulation(freq)
-#     n = len(y)
+#
+#
+# def frequency_modulation_spectrum(fm):
+#     n = len(fm)
 #     frq = rfftfreq(n, 1 / FS)
-#     yf = rfft(y)
+#     yf = rfft(fm)
+#     yf[0] = 0
+#     return frq, yf
+#
+#
+# def phase_modulation_spectrum(pm):
+#     n = len(pm)
+#     frq = rfftfreq(n, 1 / FS)
+#     yf = rfft(pm)
 #     yf[0] = 0
 #     return frq, yf
 
 
-# def phase_modulation_spectrum(freq=2):
-#     y = phase_modulation(freq)
-#     n = len(y)
-#     frq = rfftfreq(n, 1 / FS)
-#     yf = rfft(y)
-#     yf[0] = 0
-#     return frq, yf
-
-
-def synthesis_of_amplitude_modulation_signal():
-    _, yf = modulation_spectrum(amplitude_modulation)
-    new_sig = irfft(yf)
-    return new_sig
-
-
-def spectrum_with_main_frequencies():
-    _, yf = modulation_spectrum(amplitude_modulation)
-    yf_abs = np.abs(yf)
-    index = yf_abs > 50
-    yf_clean = index * yf
+def spectrum_with_main_frequencies(am_spectrum):
+    # yf = am_spectrum[1]
+    yf_abs = np.abs(am_spectrum)
+    average = max(yf_abs) / 2
+    index = yf_abs > average
+    yf_clean = index * am_spectrum
     return yf_clean
 
 
-def synthesis_of_am_signal():
-    yf_clean = spectrum_with_main_frequencies()
-    f_clean = irfft(yf_clean)
+def synthesis_of_am_signal(spectrum_with_main_frequencies):
+    f_clean = irfft(spectrum_with_main_frequencies)
     return f_clean
 
 
-def execute_filter_signal(synthesized_signal):
-    y = synthesized_signal()
+def filtering_of_signal(synthesized_signal):
+    y = synthesized_signal
     filtered = []
-    b, a = butter(4, 0.008)
+    b, a = butter(4, 0.007)
     for i in filtfilt(b, a, y):
         filtered.append((sign(i) + 1) / 2)
     return filtered
