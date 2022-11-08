@@ -16,12 +16,11 @@ def amplitude_modulation(modulator, freq=2, amplitude=1):
     am = carrier * (1 + modulator)
     return am
 
-
 def frequency_modulation(freq=2):
     carrier = 1 * np.cos((2 * np.pi * freq * TIME))  # base signal
     fc = 10  # carrier frequency
     k = 0.05  # sensitivity
-    phi = 2 * np.pi * fc * TIME + k * np.cumsum(carrier)  # phase
+    phi = 2 * np.pi * fc * TIME + k * np.cumsum(unipolar_meander(freq))  # phase
     fm = np.cos(phi)  # modulated signal
     return fm
 
