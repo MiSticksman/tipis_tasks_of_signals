@@ -1,0 +1,25 @@
+num = [2400 120000];
+den = [1 170 8000 1060000];
+Ts = 1;
+sys = tf(num,den,Ts);
+P = pole(sys);
+Z = zero(sys);
+zplane(P,Z);
+
+num = [2400 120000];
+den = [1 170 8000 1060000];
+w=1:0.1:30;
+APK=freqs(num,den,w)
+u=real(APK);
+v=imag(APK);t=0:pi/100:2*pi;
+x=sin(t);
+y=cos(t);
+plot(u,v,x,y);grid;
+
+num = [2400 120000];
+den = [1 170 8000 1060000];
+w=0.0001:0.01:10;
+apk=freqs(num,den,w);
+u=real(apk);
+v=imag(apk);
+plot(u,v);grid;
